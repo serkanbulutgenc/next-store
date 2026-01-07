@@ -3,20 +3,40 @@ import {
   fetchBaseQuery,
   BaseQueryApi,
 } from "@reduxjs/toolkit/query/react";
-import { RootState } from "..";
+import { setCartId, TCart } from "../features/cart/cartSlice";
 
 export const cartApi = createApi({
   reducerPath: "cartApi",
   baseQuery: fetchBaseQuery({ baseUrl: "https://dummyjson.com/carts" }),
   endpoints: (build) => ({
-    addCart: build.mutation({
+    addCart: build.mutation<TCart, void>({
       //query: ({ ...data }) => ({ url: `/add`, method: "POST", body: data }),
       queryFn: async (arg, queryApi, extraOptions, baseQuery) => {
-        await new Promise((res, rej) => setTimeout(res, 2000));
-        console.log("arg", arg);
-        const state = queryApi.getState() as RootState;
-        console.log("state", state);
-        return { data: "Invalid" };
+        const response = await baseQuery({
+          url: `/add`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: { userId: 142, products: [{}] },
+        });
+
+        /*
+        if (false) {
+          return {
+            error: {
+              status: 500,
+              statusText: "Internal server error",
+              data: "Invalid Id provided",
+            },
+          };
+        }*/
+        //console.log("data..", response?.data);
+        const dispatch = queryApi.dispatch;
+        if (response.data) {
+          dispatch(setCartId(response?.data?.id));
+        }
+        return { data: response.data };
       },
     }),
     getCartByUser: build.query({
@@ -25,9 +45,12 @@ export const cartApi = createApi({
     }),
     updateCart: build.mutation({
       query: ({ cartId, ...data }) => ({
-        url: `/${cartId}`,
+        url: `/15`,
         method: "PUT",
-        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: { merge: true, ...data },
       }),
     }),
   }),

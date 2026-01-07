@@ -1,32 +1,39 @@
-import {createSlice} from '@reduxjs/toolkit'
+import { TProduct } from "@/lib/types";
+import { createSlice } from "@reduxjs/toolkit";
 
-type CartItem={
-    id:number,
-    thumbnail?:string
-    title:string
-    price:number
-    qty:number
-}
+type TCartItem = Pick<
+  TProduct,
+  "id" | "price" | "discountPercentage" | "title" | "thumbnail"
+> & {
+  total: number;
+  quantity: number;
+  discountedTotal: number;
+};
 
-type InitialstateProps = {
-    cartItems:Array<CartItem>
-}
+export type TCart = {
+  id?: number;
+  products: Array<TCartItem> | null;
+  total: number;
+  discountedTotal: number;
+  userId: number | null;
+  totalProducts: number;
+  totalQuantity: number;
+};
 
-const initialState:InitialstateProps = {
-    cartItems:[] as Array<CartItem>
-}
+type InitialstateProps = { cartId: number | null };
+
+const initialState: InitialstateProps = { cartId: null };
 
 export const cartSlice = createSlice({
-    name:'cart',
-    initialState, 
-    reducers:{
-        addToCart:(state, action)=>{
-            console.log("from slice ->", state, action)
-            //add to cartItems action.payload {id:number, qty:1}
-        }
-    }
-})
+  name: "cart",
+  initialState,
+  reducers: {
+    setCartId: (state, action) => {
+      state.cartId = action.payload;
+    },
+  },
+});
 
-export const {addToCart} = cartSlice.actions
+export const { setCartId } = cartSlice.actions;
 
-export default cartSlice.reducer
+export default cartSlice.reducer;

@@ -5,9 +5,9 @@ import { useAppSelector } from "@/hooks";
 import { useGetUserByIdQuery } from "@/store/services/userApi";
 
 function UserButton() {
-  const { data: user, error, isLoading } = useGetUserByIdQuery();
+  //const { data: user, error, isLoading } = useGetUserByIdQuery();
   //const user = useAppSelector((state) => state.user.user);
-  console.log(user);
+  const user = undefined;
 
   return (
     <IconButton role="button" color="inherit">
